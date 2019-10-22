@@ -4,11 +4,22 @@
 <dict>
 	<key>bundleid</key>
 	<string>com.kangaechu.aws-vault-alfred-workflow</string>
-	<key>category</key>
-	<string>Internet</string>
 	<key>connections</key>
 	<dict>
 		<key>2C99F6F1-EF16-4CF1-9762-5D05A1FFAA4D</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>BCF9D88B-14B0-4B42-AE3C-411695BDC870</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>BCF9D88B-14B0-4B42-AE3C-411695BDC870</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
@@ -25,13 +36,62 @@
 	<key>createdby</key>
 	<string>kangaechu</string>
 	<key>description</key>
-	<string>Open AWS in Google Chrome via aws-vault</string>
+	<string>Open AWS via aws-vault</string>
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
-	<string>Open AWS in Google Chrome via aws-vault</string>
+	<string>Open AWS via aws-vault</string>
 	<key>objects</key>
 	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<true/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<true/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>0</integer>
+				<key>keyword</key>
+				<string>aws</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string></string>
+				<key>script</key>
+				<string></string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string>format_aws_vault_profiles.py</string>
+				<key>subtext</key>
+				<string>profiles</string>
+				<key>title</key>
+				<string>Open AWS via aws-vault</string>
+				<key>type</key>
+				<integer>8</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>2C99F6F1-EF16-4CF1-9762-5D05A1FFAA4D</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
@@ -40,7 +100,7 @@
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>aws_account=${1:-main}
+				<string>aws_account=${1:-$default_profile}
 aws_account=${aws_account// /} # trim space
 
 AWS_ASSUME_ROLE_TTL=${AWS_ASSUME_ROLE_TTL:-1h}
@@ -54,7 +114,7 @@ if [[ $? -ne 0 ]] then;
 	exit 1
 fi
 
-open -na "Google Chrome" --args --incognito --user-data-dir=$HOME/Library/Application\ Support/Google/Chrome/aws-vault/${aws_account} ${login_url}</string>
+open -na "Google Chrome" --args --user-data-dir=$HOME/Library/Application\ Support/Google/Chrome/aws-vault/${aws_account} ${login_url}</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -72,27 +132,29 @@ open -na "Google Chrome" --args --incognito --user-data-dir=$HOME/Library/Applic
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>argumenttype</key>
-				<integer>1</integer>
-				<key>keyword</key>
-				<string>aws</string>
-				<key>subtext</key>
-				<string>Open AWS</string>
-				<key>text</key>
-				<string>aws</string>
-				<key>withspace</key>
-				<true/>
+				<key>argument</key>
+				<string>{query}</string>
+				<key>variables</key>
+				<dict>
+					<key>aws_vault_path</key>
+					<string>{aws_vault_path}</string>
+					<key>default_profile</key>
+					<string>{default_profile}</string>
+				</dict>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.input.keyword</string>
+			<string>alfred.workflow.utility.argument</string>
 			<key>uid</key>
-			<string>2C99F6F1-EF16-4CF1-9762-5D05A1FFAA4D</string>
+			<string>BCF9D88B-14B0-4B42-AE3C-411695BDC870</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
 	</array>
 	<key>readme</key>
-	<string></string>
+	<string>Open the AWS management console via aws-vault.
+
+aws-vault is a tool for securely managing AWS credentials and authenticating multiple AWS accounts via assumeRole. `aws-vault login` is useful, but the browser cannot open multiple AWS accounts at the same time. This workflow creates a browser profile for each AWS account and opens a window for each profile.
+It allows you to open multiple AWS accounts at the same time.</string>
 	<key>uidata</key>
 	<dict>
 		<key>16039760-F173-4AB8-9C73-DA7401D5DE23</key>
@@ -105,15 +167,29 @@ open -na "Google Chrome" --args --incognito --user-data-dir=$HOME/Library/Applic
 		<key>2C99F6F1-EF16-4CF1-9762-5D05A1FFAA4D</key>
 		<dict>
 			<key>xpos</key>
-			<integer>300</integer>
+			<integer>235</integer>
 			<key>ypos</key>
-			<real>60</real>
+			<integer>60</integer>
 		</dict>
+		<key>BCF9D88B-14B0-4B42-AE3C-411695BDC870</key>
+		<dict>
+			<key>xpos</key>
+			<integer>405</integer>
+			<key>ypos</key>
+			<integer>90</integer>
+		</dict>
+	</dict>
+	<key>variables</key>
+	<dict>
+		<key>aws_vault_path</key>
+		<string>/usr/local/bin/aws-vault</string>
+		<key>default_profile</key>
+		<string>default</string>
 	</dict>
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>1.0.3</string>
+	<string>0.0.1</string>
 	<key>webaddress</key>
 	<string>https://github.com/kangaechu/aws-vault-alfred-workflow</string>
 </dict>
