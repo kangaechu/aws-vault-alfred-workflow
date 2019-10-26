@@ -46,6 +46,103 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>alfredfiltersresults</key>
+				<true/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<true/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>0</integer>
+				<key>keyword</key>
+				<string>aws</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string></string>
+				<key>script</key>
+				<string>#!/bin/bash
+
+set -e
+
+function fetch(){
+    local aws_vault_path=${aws_vault_path:-/usr/local/bin/aws-vault}
+    result=$(${aws_vault_path} list)
+    if [[ $? -ne 0 ]]; then
+        echo "error on running aws-vault list"
+        echo "${result}" &gt;&amp;2
+        exit 1
+    fi
+    echo "${result}"
+}
+
+function parse(){
+    local aws_vault_result="$1"
+    echo "${aws_vault_result}" | tail +3 | cut -f 1 -d' ' | grep -Ev '^-$'
+}
+
+function format_alfred(){
+    local profiles="$1"
+    local profiles_max_lines=$(echo -n "${profiles}" | grep -c '^')
+    local i=0
+
+    echo '{"items": ['
+    for profile in ${profiles}; do
+        cat &lt;&lt; EOS
+    {
+        "uid": "${profile}",
+        "title": "${profile}",
+        "arg": "${profile}",
+        "icon": {"path": "icon.png"},
+        "autocomplete": "${profile}"
+EOS
+        i=$(( i+1 ))
+        if [[ $i -eq $profiles_max_lines ]]; then
+            echo '    }'
+        else
+            echo '    },'
+        fi
+    done
+    echo ']}'
+
+}
+
+aws_vault_result=$(fetch)
+profiles=$(parse "${aws_vault_result}")
+format_alfred "${profiles}"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string>format_aws_vault_profiles.sh</string>
+				<key>subtext</key>
+				<string>profiles</string>
+				<key>title</key>
+				<string>Open AWS via aws-vault</string>
+				<key>type</key>
+				<integer>0</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>2C99F6F1-EF16-4CF1-9762-5D05A1FFAA4D</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>concurrently</key>
 				<false/>
 				<key>escaping</key>
@@ -79,55 +176,6 @@ open -na "Google Chrome" --args --user-data-dir=$HOME/Library/Application\ Suppo
 			<string>16039760-F173-4AB8-9C73-DA7401D5DE23</string>
 			<key>version</key>
 			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>alfredfiltersresults</key>
-				<true/>
-				<key>alfredfiltersresultsmatchmode</key>
-				<integer>0</integer>
-				<key>argumenttreatemptyqueryasnil</key>
-				<true/>
-				<key>argumenttrimmode</key>
-				<integer>0</integer>
-				<key>argumenttype</key>
-				<integer>1</integer>
-				<key>escaping</key>
-				<integer>0</integer>
-				<key>keyword</key>
-				<string>aws</string>
-				<key>queuedelaycustom</key>
-				<integer>3</integer>
-				<key>queuedelayimmediatelyinitially</key>
-				<true/>
-				<key>queuedelaymode</key>
-				<integer>0</integer>
-				<key>queuemode</key>
-				<integer>1</integer>
-				<key>runningsubtext</key>
-				<string></string>
-				<key>script</key>
-				<string></string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string>format_aws_vault_profiles.sh</string>
-				<key>subtext</key>
-				<string>profiles</string>
-				<key>title</key>
-				<string>Open AWS via aws-vault</string>
-				<key>type</key>
-				<integer>8</integer>
-				<key>withspace</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.input.scriptfilter</string>
-			<key>uid</key>
-			<string>2C99F6F1-EF16-4CF1-9762-5D05A1FFAA4D</string>
-			<key>version</key>
-			<integer>3</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -184,12 +232,14 @@ It allows you to open multiple AWS accounts at the same time.</string>
 		<key>aws_vault_path</key>
 		<string>/usr/local/bin/aws-vault</string>
 		<key>default_profile</key>
-		<string>default</string>
+		<string></string>
 	</dict>
 	<key>variablesdontexport</key>
-	<array/>
+	<array>
+		<string>default_profile</string>
+	</array>
 	<key>version</key>
-	<string>0.0.2</string>
+	<string>0.0.3</string>
 	<key>webaddress</key>
 	<string>https://github.com/kangaechu/aws-vault-alfred-workflow</string>
 </dict>
