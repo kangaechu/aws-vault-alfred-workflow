@@ -4,6 +4,8 @@
 <dict>
 	<key>bundleid</key>
 	<string>com.kangaechu.aws-vault-alfred-workflow</string>
+	<key>category</key>
+	<string>Tools</string>
 	<key>connections</key>
 	<dict>
 		<key>2C99F6F1-EF16-4CF1-9762-5D05A1FFAA4D</key>
@@ -162,7 +164,11 @@ if [[ $? -ne 0 ]] then;
 	exit 1
 fi
 
-open -na "Google Chrome" --args --user-data-dir=$HOME/Library/Application\ Support/Google/Chrome/aws-vault/${aws_account} ${login_url}</string>
+if [[ ${preferred_browser} == "firefox" ]]; then
+	open -na firefox --args --profile $HOME/Library/Application\ Support/Firefox/Profiles/aws-vault/${aws_account} ${login_url}
+else
+	open -na "Google Chrome" --args --user-data-dir=$HOME/Library/Application\ Support/Google/Chrome/aws-vault/${aws_account} ${login_url}
+fi</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -233,13 +239,15 @@ It allows you to open multiple AWS accounts at the same time.</string>
 		<string>/usr/local/bin/aws-vault</string>
 		<key>default_profile</key>
 		<string></string>
+		<key>preferred_browser</key>
+		<string>chrome</string>
 	</dict>
 	<key>variablesdontexport</key>
 	<array>
 		<string>default_profile</string>
 	</array>
 	<key>version</key>
-	<string>0.0.3</string>
+	<string>0.0.4</string>
 	<key>webaddress</key>
 	<string>https://github.com/kangaechu/aws-vault-alfred-workflow</string>
 </dict>
