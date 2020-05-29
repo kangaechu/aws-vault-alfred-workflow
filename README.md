@@ -15,7 +15,19 @@ It allows you to open multiple AWS accounts at the same time.
 `aws [profile name]`
 
 The profile name corresponds to the profile name in `$HOME/.aws/config`.
-Internally launch the `aws-vault login` command and launch Chrome with a separate profile.
+Internally launch the `aws-vault login` command and launch your browser with a separate profile.
+
+## Support browsers
+
+- Google Chrome
+- Firefox
+
+When you want to use firefox, follow this instructions.
+
+1. Open Alfred Preference, then open Workflows.
+2. Select Open AWS via aws-vault.
+3. Select [x] icon.
+4. From Workflow Environment Variables, change preferred_browser variable from `chrome` to `firefox`.
 
 ## Requirements
 
