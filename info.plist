@@ -77,9 +77,12 @@
 
 set -e
 
+aws-vault() {
+  "${aws_vault_path:-/usr/local/bin/aws-vault}" "$@"
+}
+
 function fetch(){
-    local aws_vault_path=${aws_vault_path:-/usr/local/bin/aws-vault}
-    result=$(${aws_vault_path} list)
+    result=$(aws-vault list)
     if [[ $? -ne 0 ]]; then
         echo "error on running aws-vault list"
         echo "${result}" &gt;&amp;2
@@ -121,7 +124,8 @@ EOS
 
 aws_vault_result=$(fetch)
 profiles=$(parse "${aws_vault_result}")
-format_alfred "${profiles}"</string>
+format_alfred "${profiles}"
+</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -156,7 +160,11 @@ aws_account=${aws_account// /} # trim space
 AWS_ASSUME_ROLE_TTL=${AWS_ASSUME_ROLE_TTL:-1h}
 AWS_FEDERATION_TOKEN_TTL=${AWS_FEDERATION_TOKEN_TTL:-1h}
 
-login_url=$(aws-vault login ${aws_account} --prompt=osascript --stdout)
+aws-vault() {
+  "${aws_vault_path:-/usr/local/bin/aws-vault}" "$@"
+}
+
+login_url="$(aws-vault login "$aws_account" --prompt=osascript --stdout)"
 
 if [[ $? -ne 0 ]] then;
 	osascript -e 'display dialog "AWS Authentication failed"'
@@ -168,7 +176,8 @@ if [[ ${preferred_browser} == "firefox" ]]; then
 	open -na firefox --args --profile $HOME/Library/Application\ Support/Firefox/Profiles/aws-vault/${aws_account} ${login_url}
 else
 	open -na "Google Chrome" --args --user-data-dir=$HOME/Library/Application\ Support/Google/Chrome/aws-vault/${aws_account} ${login_url}
-fi</string>
+fi
+</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -191,9 +200,9 @@ fi</string>
 				<key>variables</key>
 				<dict>
 					<key>aws_vault_path</key>
-					<string>{aws_vault_path}</string>
+					<string>{var:aws_vault_path}</string>
 					<key>default_profile</key>
-					<string>{default_profile}</string>
+					<string>{var:default_profile}</string>
 				</dict>
 			</dict>
 			<key>type</key>
