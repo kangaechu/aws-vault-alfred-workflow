@@ -5,7 +5,7 @@
 	<key>bundleid</key>
 	<string>com.kangaechu.aws-vault-alfred-workflow</string>
 	<key>category</key>
-	<string>Tools</string>
+	<string>Productivity</string>
 	<key>connections</key>
 	<dict>
 		<key>2C99F6F1-EF16-4CF1-9762-5D05A1FFAA4D</key>
@@ -45,6 +45,65 @@
 	<string>Open AWS via aws-vault</string>
 	<key>objects</key>
 	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>aws_account=${1:-$default_profile}
+aws_account=${aws_account// /} # trim space
+
+AWS_ASSUME_ROLE_TTL=${AWS_ASSUME_ROLE_TTL:-1h}
+AWS_FEDERATION_TOKEN_TTL=${AWS_FEDERATION_TOKEN_TTL:-1h}
+
+aws-vault() {
+  "${aws_vault_path:-/usr/local/bin/aws-vault}" "$@"
+}
+
+firefox-bin() {
+  "${firefox_path:-/Applications/Firefox.app/Contents/MacOS/firefox}" "$@"
+}
+
+login_url="$(aws-vault login "$aws_account" --prompt=osascript --stdout)"
+
+if [[ $? -ne 0 ]] then;
+	osascript -e 'display dialog "AWS Authentication failed"'
+	echo ${login_url} &gt; /tmp/aws-vault-login-${aws_account}-$(date +"%Y%m%d_%H%M%S").log
+	exit 1
+fi
+
+if [[ ${preferred_browser} == "firefox" ]]; then
+	open -na firefox --args --profile $HOME/Library/Application\ Support/Firefox/Profiles/aws-vault/${aws_account} ${login_url}
+
+elif [[ ${preferred_browser} == "chrome" ]]; then
+	open -na "Google Chrome" --args --user-data-dir=$HOME/Library/Application\ Support/Google/Chrome/aws-vault/${aws_account} ${login_url}
+
+elif [[ ${preferred_browser} == "firefox-containers" ]]; then
+  # to work install add-on:
+  # https://addons.mozilla.org/en-US/firefox/addon/open-url-in-container/
+  
+  ENCODED_URL="${login_url//&amp;/%26}"
+  URI_HANDLER="ext+container:name=${aws_account}&amp;url=${ENCODED_URL}"
+
+  firefox-bin "${URI_HANDLER}"
+fi</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>5</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>16039760-F173-4AB8-9C73-DA7401D5DE23</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
@@ -149,52 +208,6 @@ format_alfred "${profiles}"
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>102</integer>
-				<key>script</key>
-				<string>aws_account=${1:-$default_profile}
-aws_account=${aws_account// /} # trim space
-
-AWS_ASSUME_ROLE_TTL=${AWS_ASSUME_ROLE_TTL:-1h}
-AWS_FEDERATION_TOKEN_TTL=${AWS_FEDERATION_TOKEN_TTL:-1h}
-
-aws-vault() {
-  "${aws_vault_path:-/usr/local/bin/aws-vault}" "$@"
-}
-
-login_url="$(aws-vault login "$aws_account" --prompt=osascript --stdout)"
-
-if [[ $? -ne 0 ]] then;
-	osascript -e 'display dialog "AWS Authentication failed"'
-	echo ${login_url} &gt; /tmp/aws-vault-login-${aws_account}-$(date +"%Y%m%d_%H%M%S").log
-	exit 1
-fi
-
-if [[ ${preferred_browser} == "firefox" ]]; then
-	open -na firefox --args --profile $HOME/Library/Application\ Support/Firefox/Profiles/aws-vault/${aws_account} ${login_url}
-else
-	open -na "Google Chrome" --args --user-data-dir=$HOME/Library/Application\ Support/Google/Chrome/aws-vault/${aws_account} ${login_url}
-fi
-</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>type</key>
-				<integer>5</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>16039760-F173-4AB8-9C73-DA7401D5DE23</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>argument</key>
 				<string>{query}</string>
 				<key>variables</key>
@@ -247,9 +260,11 @@ It allows you to open multiple AWS accounts at the same time.</string>
 		<key>aws_vault_path</key>
 		<string>/usr/local/bin/aws-vault</string>
 		<key>default_profile</key>
-		<string></string>
+		<string>sandbox</string>
+		<key>firefox_path</key>
+		<string>/Applications/Firefox.app/Contents/MacOS/firefox</string>
 		<key>preferred_browser</key>
-		<string>chrome</string>
+		<string>firefox-containers</string>
 	</dict>
 	<key>variablesdontexport</key>
 	<array>
