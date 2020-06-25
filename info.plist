@@ -164,6 +164,10 @@ aws-vault() {
   "${aws_vault_path:-/usr/local/bin/aws-vault}" "$@"
 }
 
+firefox-bin() {
+  "${firefox_path:-/Applications/Firefox.app/Contents/MacOS/firefox}" "$@"
+}
+
 login_url="$(aws-vault login "$aws_account" --prompt=osascript --stdout)"
 
 if [[ $? -ne 0 ]] then;
@@ -174,8 +178,18 @@ fi
 
 if [[ ${preferred_browser} == "firefox" ]]; then
 	open -na firefox --args --profile $HOME/Library/Application\ Support/Firefox/Profiles/aws-vault/${aws_account} ${login_url}
-else
+
+elif [[ ${preferred_browser} == "chrome" ]]; then
 	open -na "Google Chrome" --args --user-data-dir=$HOME/Library/Application\ Support/Google/Chrome/aws-vault/${aws_account} ${login_url}
+
+elif [[ ${preferred_browser} == "firefox-containers" ]]; then
+  # to work install add-on:
+  # https://addons.mozilla.org/en-US/firefox/addon/open-url-in-container/
+  
+  ENCODED_URL="${login_url//&amp;/%26}"
+  URI_HANDLER="ext+container:name=${aws_account}&amp;url=${ENCODED_URL}"
+
+  firefox-bin "${URI_HANDLER}"
 fi
 </string>
 				<key>scriptargtype</key>
@@ -248,8 +262,10 @@ It allows you to open multiple AWS accounts at the same time.</string>
 		<string>/usr/local/bin/aws-vault</string>
 		<key>default_profile</key>
 		<string></string>
+		<key>firefox_path</key>
+		<string>/Applications/Firefox.app/Contents/MacOS/firefox</string>
 		<key>preferred_browser</key>
-		<string>chrome</string>
+		<string>firefox-containers</string>
 	</dict>
 	<key>variablesdontexport</key>
 	<array>
