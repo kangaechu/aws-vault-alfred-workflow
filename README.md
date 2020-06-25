@@ -1,5 +1,4 @@
-aws-vault-alfred-workflow
-=====================
+# aws-vault-alfred-workflow
 
 Open the AWS management console via aws-vault.
 
@@ -21,6 +20,7 @@ Internally launch the `aws-vault login` command and launch your browser with a s
 
 - Google Chrome
 - Firefox
+- Firefox Containers
 
 When you want to use firefox, follow this instructions.
 
@@ -28,6 +28,14 @@ When you want to use firefox, follow this instructions.
 2. Select Open AWS via aws-vault.
 3. Select [x] icon.
 4. From Workflow Environment Variables, change preferred_browser variable from `chrome` to `firefox`.
+
+When you want to use Firefox Containers, follow this instructions.
+
+1. Install [Firefox Multi-Account Containers](https://addons.mozilla.org/en-US/firefox/addon/multi-account-containers/) and [Open external links in a container](https://addons.mozilla.org/en-US/firefox/addon/open-url-in-container/).
+2. Open Alfred Preference, then open Workflows.
+3. Select Open AWS via aws-vault.
+4. Select [x] icon.
+5. From Workflow Environment Variables, change preferred_browser variable from `chrome` to `firefox-container`.
 
 ## Requirements
 
