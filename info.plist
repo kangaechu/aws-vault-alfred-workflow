@@ -265,7 +265,7 @@ It allows you to open multiple AWS accounts at the same time.</string>
 		<key>firefox_path</key>
 		<string>/Applications/Firefox.app/Contents/MacOS/firefox</string>
 		<key>preferred_browser</key>
-		<string>firefox-containers</string>
+		<string>chrome</string>
 	</dict>
 	<key>variablesdontexport</key>
 	<array>
