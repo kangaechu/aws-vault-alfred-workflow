@@ -35,7 +35,7 @@ When you want to use Firefox Containers, follow this instructions.
 2. Open Alfred Preference, then open Workflows.
 3. Select Open AWS via aws-vault.
 4. Select [x] icon.
-5. From Workflow Environment Variables, change preferred_browser variable from `chrome` to `firefox-container`.
+5. From Workflow Environment Variables, change preferred_browser variable from `chrome` to `firefox-containers`.
 
 ## Requirements
 
