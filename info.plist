@@ -271,7 +271,7 @@ It allows you to open multiple AWS accounts at the same time.</string>
 		<string>default_profile</string>
 	</array>
 	<key>version</key>
-	<string>0.0.6</string>
+	<string>0.0.7</string>
 	<key>webaddress</key>
 	<string>https://github.com/kangaechu/aws-vault-alfred-workflow</string>
 </dict>
