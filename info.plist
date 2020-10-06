@@ -77,9 +77,8 @@
 
 set -e
 
-aws-vault() {
-  "${aws_vault_path:-/usr/local/bin/aws-vault}" "$@"
-}
+# load system path
+eval "$(/usr/libexec/path_helper -s)"
 
 function fetch(){
     result=$(aws-vault list)
@@ -159,16 +158,16 @@ aws_account=${aws_account// /} # trim space
 
 AWS_ASSUME_ROLE_TTL=${AWS_ASSUME_ROLE_TTL:-1h}
 AWS_FEDERATION_TOKEN_TTL=${AWS_FEDERATION_TOKEN_TTL:-1h}
+export AWS_VAULT_PROMPT="${AWS_VAULT_PROMPT:-osascript}"
 
-aws-vault() {
-  "${aws_vault_path:-/usr/local/bin/aws-vault}" "$@"
-}
+# load system path
+eval "$(/usr/libexec/path_helper -s)"
 
 firefox-bin() {
   "${firefox_path:-/Applications/Firefox.app/Contents/MacOS/firefox}" "$@"
 }
 
-login_url="$(aws-vault login "$aws_account" --prompt=osascript --stdout)"
+login_url="$(aws-vault login "$aws_account" --stdout)"
 
 if [[ $? -ne 0 ]] then;
 	osascript -e 'display dialog "AWS Authentication failed"'
@@ -185,7 +184,7 @@ elif [[ ${preferred_browser} == "chrome" ]]; then
 elif [[ ${preferred_browser} == "firefox-containers" ]]; then
   # to work install add-on:
   # https://addons.mozilla.org/en-US/firefox/addon/open-url-in-container/
-  
+
   ENCODED_URL="${login_url//&amp;/%26}"
   URI_HANDLER="ext+container:name=${aws_account}&amp;url=${ENCODED_URL}"
 
@@ -272,7 +271,7 @@ It allows you to open multiple AWS accounts at the same time.</string>
 		<string>default_profile</string>
 	</array>
 	<key>version</key>
-	<string>0.0.4</string>
+	<string>0.0.6</string>
 	<key>webaddress</key>
 	<string>https://github.com/kangaechu/aws-vault-alfred-workflow</string>
 </dict>
